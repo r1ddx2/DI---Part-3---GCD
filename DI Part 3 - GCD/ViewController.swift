@@ -8,6 +8,9 @@
 import UIKit
 
 class ViewController: UIViewController {
+    
+    let offsetProvider = OffsetProvider(httpClient: HTTPClient())
+    
     // MARK: - Subviews
    let offsetView0 = OffsetView()
     let offsetView10 = OffsetView()
@@ -16,6 +19,9 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setUpLayouts()
+        
+        fetchByOffsets()
+      
     }
     private func setUpLayouts() {
         view.addSubview(offsetView0)
@@ -42,6 +48,18 @@ class ViewController: UIViewController {
             
             
         ])
+    }
+    private func fetchByOffsets() {
+        offsetProvider.fetchOffset0 { [weak self] result in
+            guard let self = self else { return }
+            
+            switch result {
+            case .success(let response):
+                print(response)
+            case .failure(let error):
+               print("Error: \(error)")
+            }
+        }
     }
 
 }

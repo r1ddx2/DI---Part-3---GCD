@@ -14,6 +14,9 @@
 		9D39754E2AF14ABD00C82A4B /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9D39754D2AF14ABD00C82A4B /* Assets.xcassets */; };
 		9D3975512AF14ABD00C82A4B /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 9D39754F2AF14ABD00C82A4B /* LaunchScreen.storyboard */; };
 		9D3975592AF1E3BB00C82A4B /* OffsetView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D3975582AF1E3BB00C82A4B /* OffsetView.swift */; };
+		9D39755B2AF1E79700C82A4B /* Model.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D39755A2AF1E79700C82A4B /* Model.swift */; };
+		9D39755D2AF1EA0A00C82A4B /* HTTPClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D39755C2AF1EA0A00C82A4B /* HTTPClient.swift */; };
+		9D39755F2AF1F21C00C82A4B /* OffsetProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D39755E2AF1F21C00C82A4B /* OffsetProvider.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -26,6 +29,9 @@
 		9D3975502AF14ABD00C82A4B /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		9D3975522AF14ABD00C82A4B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		9D3975582AF1E3BB00C82A4B /* OffsetView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OffsetView.swift; sourceTree = "<group>"; };
+		9D39755A2AF1E79700C82A4B /* Model.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Model.swift; sourceTree = "<group>"; };
+		9D39755C2AF1EA0A00C82A4B /* HTTPClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTTPClient.swift; sourceTree = "<group>"; };
+		9D39755E2AF1F21C00C82A4B /* OffsetProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OffsetProvider.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -62,6 +68,9 @@
 				9D3975462AF14ABC00C82A4B /* SceneDelegate.swift */,
 				9D3975482AF14ABC00C82A4B /* ViewController.swift */,
 				9D3975582AF1E3BB00C82A4B /* OffsetView.swift */,
+				9D39755C2AF1EA0A00C82A4B /* HTTPClient.swift */,
+				9D39755E2AF1F21C00C82A4B /* OffsetProvider.swift */,
+				9D39755A2AF1E79700C82A4B /* Model.swift */,
 				9D39754A2AF14ABC00C82A4B /* Main.storyboard */,
 				9D39754D2AF14ABD00C82A4B /* Assets.xcassets */,
 				9D39754F2AF14ABD00C82A4B /* LaunchScreen.storyboard */,
@@ -141,7 +150,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9D39755B2AF1E79700C82A4B /* Model.swift in Sources */,
 				9D3975492AF14ABC00C82A4B /* ViewController.swift in Sources */,
+				9D39755F2AF1F21C00C82A4B /* OffsetProvider.swift in Sources */,
+				9D39755D2AF1EA0A00C82A4B /* HTTPClient.swift in Sources */,
 				9D3975592AF1E3BB00C82A4B /* OffsetView.swift in Sources */,
 				9D3975452AF14ABC00C82A4B /* AppDelegate.swift in Sources */,
 				9D3975472AF14ABC00C82A4B /* SceneDelegate.swift in Sources */,
