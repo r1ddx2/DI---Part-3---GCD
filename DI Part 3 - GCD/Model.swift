@@ -38,3 +38,7 @@ struct ResultItem: Codable {
         
 }
 
+struct DistrictLocation {
+    var district: String
+    var location: String
+}

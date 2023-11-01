@@ -7,10 +7,28 @@
 
 import UIKit
 
+enum Sections: String, CaseIterable {
+    case offsetView0
+    case offsetView10
+    case offsetView20
+    
+    var request: OffsetRequest {
+        switch self {
+        case .offsetView0:
+            return .offset0
+        case .offsetView10:
+            return .offset10
+        case .offsetView20:
+            return .offset20
+        }
+    }
+}
+
 class ViewController: UIViewController {
     
     let offsetProvider = OffsetProvider(httpClient: HTTPClient())
     var data = [String: DistrictLocation]()
+
     
     // MARK: - Subviews
     let offsetView0 = OffsetView()
@@ -19,12 +37,10 @@ class ViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        setUpLayouts()
         
-        fetchByOffsets(.offset0)
-        fetchByOffsets(.offset10)
-        fetchByOffsets(.offset20)
-      
+        setUpLayouts()
+        fetchData()
+        
     }
     private func setUpLayouts() {
         view.addSubview(offsetView0)
@@ -52,45 +68,66 @@ class ViewController: UIViewController {
             
         ])
     }
-    private func fetchByOffsets(_ offsetValue: OffsetRequest) {
-        offsetProvider.fetchOffset(
-            request: offsetValue) { [weak self] result in
+    // MARK: - Methods
+    
+    private func fetchData() {
+        let offsetAPIGroup = DispatchGroup()
+        
+        for i in 0..<Sections.allCases.count {
+            let currentOffsetRequest = Sections.allCases[i].request
+            
+            offsetAPIGroup.enter()
+       
+            DispatchQueue.global().async { [weak self] in
                 guard let self = self else { return }
                 
-                switch result {
-                case .success(let response):
-                    let fetchedData = DistrictLocation(
-                        district: response.result.results[0].district,
-                        location:  response.result.results[0].location)
-                    
-                    data[offsetValue.rawValue] = fetchedData
-                    updateUI(for: offsetValue)
-                 
-                case .failure(let error):
-                    print("Error: \(error)")
+                self.offsetProvider.fetchOffset(
+                    request: currentOffsetRequest) { [weak self] result in
+                        guard let self = self else { return }
+                        
+                        switch result {
+                        case .success(let response):
+                            let fetchedData = DistrictLocation(
+                                district: response.result.results[0].district,
+                                location:  response.result.results[0].location)
+                            
+                            data[currentOffsetRequest.rawValue] = fetchedData
+                       
+                        case .failure(let error):
+                            print("Error: \(error)")
+                        }
+                        offsetAPIGroup.leave()
+                        
                 }
+    
             }
+            
+        }
+        
+        offsetAPIGroup.notify(queue: .main) {
+          self.updateUI()
+           
+        }
+        
         
     }
     
-    private func updateUI(for offsetValue: OffsetRequest) {
+    
+    private func updateUI() {
         let districtDescription = "District: "
         let locationDescription = "Location: "
+
+        offsetView0.districtLabel.text = districtDescription + data[Sections.offsetView0.request.rawValue]!.district
+            offsetView0.locationLabel.text = locationDescription + data[Sections.offsetView0.request.rawValue]!.location
+ 
+            offsetView10.districtLabel.text = districtDescription + data[Sections.offsetView10.request.rawValue]!.district
+            offsetView10.locationLabel.text = locationDescription + data[Sections.offsetView10.request.rawValue]!.location
+     
+            offsetView20.districtLabel.text = districtDescription + data[Sections.offsetView20.request.rawValue]!.district
+            offsetView20.locationLabel.text = locationDescription + data[Sections.offsetView20.request.rawValue]!.location
         
-        switch offsetValue {
-        case .offset0:
-            offsetView0.districtLabel.text = districtDescription + data[offsetValue.rawValue]!.district
-            offsetView0.locationLabel.text = locationDescription + data[offsetValue.rawValue]!.location
-        
-        case .offset10:
-            offsetView10.districtLabel.text = districtDescription + data[offsetValue.rawValue]!.district
-            offsetView10.locationLabel.text = locationDescription + data[offsetValue.rawValue]!.location
-       
-        case .offset20:
-            offsetView20.districtLabel.text = districtDescription + data[offsetValue.rawValue]!.district
-            offsetView20.locationLabel.text = locationDescription + data[offsetValue.rawValue]!.location
-        }
         
     }
+    
+    
 }
-

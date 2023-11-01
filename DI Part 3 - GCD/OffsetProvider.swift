@@ -9,7 +9,7 @@ import UIKit
 
 typealias OffsetResponse = (Result<Root, Error>) -> Void
 
-enum OffsetRequest: HTTPRequest {
+enum OffsetRequest: String, CaseIterable, HTTPRequest{
     case offset0
     case offset10
     case offset20
@@ -35,19 +35,9 @@ class OffsetProvider {
         self.httpClient = httpClient
     }
     
-    // MARK: - Public Methods
-    func fetchOffset0(completion: @escaping OffsetResponse) {
-        fetchData(request: OffsetRequest.offset0, completion: completion)
-    }
-    func fetchOffset10(completion: @escaping OffsetResponse) {
-        fetchData(request: OffsetRequest.offset10, completion: completion)
-    }
-    func fetchOffset20(completion: @escaping OffsetResponse) {
-        fetchData(request: OffsetRequest.offset20, completion: completion)
-    }
-    
-    // MARK: - Private Methods
-    private func fetchData(
+  
+    // MARK: - Methods
+    func fetchOffset(
         request: OffsetRequest,
         completion: @escaping OffsetResponse) {
             

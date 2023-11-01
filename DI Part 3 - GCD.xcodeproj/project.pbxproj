@@ -45,6 +45,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		9D359A9F2AF2055200DE4A42 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				9D3975482AF14ABC00C82A4B /* ViewController.swift */,
+				9D3975582AF1E3BB00C82A4B /* OffsetView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
 		9D3975382AF14ABC00C82A4B = {
 			isa = PBXGroup;
 			children = (
@@ -66,8 +75,7 @@
 			children = (
 				9D3975442AF14ABC00C82A4B /* AppDelegate.swift */,
 				9D3975462AF14ABC00C82A4B /* SceneDelegate.swift */,
-				9D3975482AF14ABC00C82A4B /* ViewController.swift */,
-				9D3975582AF1E3BB00C82A4B /* OffsetView.swift */,
+				9D359A9F2AF2055200DE4A42 /* Views */,
 				9D39755C2AF1EA0A00C82A4B /* HTTPClient.swift */,
 				9D39755E2AF1F21C00C82A4B /* OffsetProvider.swift */,
 				9D39755A2AF1E79700C82A4B /* Model.swift */,
