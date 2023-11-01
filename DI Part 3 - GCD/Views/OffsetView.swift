@@ -9,17 +9,17 @@ import UIKit
 
 class OffsetView: UIView {
     // MARK: - Subviews
-    private let districtLabel: UILabel = {
+    let districtLabel: UILabel = {
         let districtLabel = UILabel()
         districtLabel.textColor = .black
-        districtLabel.font = UIFont.boldSystemFont(ofSize: 20)
+        districtLabel.font = UIFont.systemFont(ofSize: 20, weight: .regular)
         districtLabel.text = "District"
         return districtLabel
     }()
-    private let locationLabel: UILabel = {
+    let locationLabel: UILabel = {
         let locationLabel = UILabel()
         locationLabel.textColor = .black
-        locationLabel.font = UIFont.boldSystemFont(ofSize: 20)
+        locationLabel.font =  UIFont.systemFont(ofSize: 20, weight: .regular)
         locationLabel.text = "Location"
         return locationLabel
     }()
@@ -46,10 +46,10 @@ class OffsetView: UIView {
         subviews.forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
         
         NSLayoutConstraint.activate([
-            districtLabel.topAnchor.constraint(equalTo: topAnchor, constant: 30),
+            districtLabel.topAnchor.constraint(equalTo: topAnchor, constant: 40),
             districtLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 20),
             
-            locationLabel.topAnchor.constraint(equalTo: districtLabel.bottomAnchor, constant: 40),
+            locationLabel.topAnchor.constraint(equalTo: districtLabel.bottomAnchor, constant: 20),
             locationLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 20),
          
         ])
