@@ -29,7 +29,6 @@ class ViewController: UIViewController {
     let offsetProvider = OffsetProvider(httpClient: HTTPClient())
     var data = [String: DistrictLocation]()
 
-    
     // MARK: - Subviews
     let offsetView0 = OffsetView()
     let offsetView10 = OffsetView()
@@ -64,70 +63,84 @@ class ViewController: UIViewController {
             offsetView20.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 24),
             offsetView20.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -24),
             offsetView20.heightAnchor.constraint(equalToConstant: 150),
-            
-            
+       
         ])
     }
     // MARK: - Methods
     
     private func fetchData() {
-        let offsetAPIGroup = DispatchGroup()
+        let group = DispatchGroup()
+        let semaphore = DispatchSemaphore(value: 1)
         
         for i in 0..<Sections.allCases.count {
             let currentOffsetRequest = Sections.allCases[i].request
             
-            offsetAPIGroup.enter()
-       
-            DispatchQueue.global().async { [weak self] in
-                guard let self = self else { return }
-                
-                self.offsetProvider.fetchOffset(
-                    request: currentOffsetRequest) { [weak self] result in
-                        guard let self = self else { return }
-                        
-                        switch result {
-                        case .success(let response):
-                            let fetchedData = DistrictLocation(
-                                district: response.result.results[0].district,
-                                location:  response.result.results[0].location)
-                            
-                            data[currentOffsetRequest.rawValue] = fetchedData
-                       
-                        case .failure(let error):
-                            print("Error: \(error)")
-                        }
-                        offsetAPIGroup.leave()
-                        
-                }
-    
+            print("Enter api number \(i)")
+            group.enter()
+            
+            if i == 0 {
+                // semaphore.wait()
             }
+            
+            self.offsetProvider.fetchOffset(
+                request: currentOffsetRequest) { [weak self] result in
+                    guard let self = self else { return }
+                    
+                    switch result {
+                    case .success(let response):
+                        
+                        let fetchedData = DistrictLocation(
+                            district: response.result.results[0].district,
+                            location:  response.result.results[0].location)
+                        
+                        data[currentOffsetRequest.rawValue] = fetchedData
+                        
+                        //updateUI(for: i)
+                        
+                    case .failure(let error):
+                        print("Error: \(error)")
+                    }
+                    
+                    print("Leave api number \(i)")
+                    group.leave()
+                    
+                    //semaphore.signal()
+            }
+       
+        }
+        
+        group.notify(queue: .main) {
+            print("Finish all tasks using groups")
+            self.updateUI(for: nil)
             
         }
         
-        offsetAPIGroup.notify(queue: .main) {
-          self.updateUI()
-           
+        
+    }
+    
+    
+    private func updateUI(for view: Int?) {
+        let allViews = [offsetView0, offsetView10, offsetView20]
+        
+        // Update in order
+        guard let view = view else {
+            for (index, view) in allViews.enumerated() {
+                let data = data[Sections.allCases[index].request.rawValue]
+                view.districtLabel.text = "District: \(data!.district)"
+                view.locationLabel.text = "Location: \(data!.location)"
+            }
+            return
         }
         
-        
-    }
-    
-    
-    private func updateUI() {
-        let districtDescription = "District: "
-        let locationDescription = "Location: "
-
-        offsetView0.districtLabel.text = districtDescription + data[Sections.offsetView0.request.rawValue]!.district
-            offsetView0.locationLabel.text = locationDescription + data[Sections.offsetView0.request.rawValue]!.location
- 
-            offsetView10.districtLabel.text = districtDescription + data[Sections.offsetView10.request.rawValue]!.district
-            offsetView10.locationLabel.text = locationDescription + data[Sections.offsetView10.request.rawValue]!.location
-     
-            offsetView20.districtLabel.text = districtDescription + data[Sections.offsetView20.request.rawValue]!.district
-            offsetView20.locationLabel.text = locationDescription + data[Sections.offsetView20.request.rawValue]!.location
+        // Update all at once
+        print("Finish task number \(view) using semaphore")
+        let data = data[Sections.allCases[view].request.rawValue]
+        allViews[view].districtLabel.text = "District: \(data!.district)"
+        allViews[view].locationLabel.text = "Location: \(data!.location)"
         
         
     }
+    
     
     
 }

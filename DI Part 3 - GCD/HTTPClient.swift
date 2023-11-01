@@ -21,7 +21,6 @@ protocol HTTPRequest {
 }
 
 extension HTTPRequest {
-    
     func makeRequest() -> URLRequest {
         let urlString = "https://data.taipei/api/v1/dataset/c7784a9f-e11e-4145-8b72-95b44fdc7b83" + endPoint
         let url = URL(string: urlString)!
@@ -42,6 +41,7 @@ class HTTPClient: HTTPClientProtocol {
     func request(
         _ HTTPRequest: HTTPRequest,
         completion: @escaping (Result<Data, HTTPError>) -> Void) {
+            
             
             URLSession.shared.dataTask(
                 with: HTTPRequest.makeRequest(),
@@ -73,16 +73,9 @@ class HTTPClient: HTTPClientProtocol {
                     }
                     
                 }).resume()
-                    
-                    
-                    
-                
+
+            
     }
     
 
-    
-   
-    
-    
-    
 }
