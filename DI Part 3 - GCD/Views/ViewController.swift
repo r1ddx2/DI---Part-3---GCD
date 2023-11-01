@@ -38,7 +38,8 @@ class ViewController: UIViewController {
         super.viewDidLoad()
         
         setUpLayouts()
-        fetchData()
+        fetchWithGroup()
+        //fetchWithSemaphore()
         
     }
     private func setUpLayouts() {
@@ -67,19 +68,51 @@ class ViewController: UIViewController {
         ])
     }
     // MARK: - Methods
-    
-    private func fetchData() {
+    private func fetchWithGroup() {
         let group = DispatchGroup()
+        for i in 0..<Sections.allCases.count {
+            let currentOffsetRequest = Sections.allCases[i].request
+            
+            print("Enter group \(i)")
+            group.enter()
+        
+            self.offsetProvider.fetchOffset(
+                request: currentOffsetRequest) { [weak self] result in
+                    guard let self = self else { return }
+                    
+                    switch result {
+                    case .success(let response):
+                        let fetchedData = DistrictLocation(
+                            district: response.result.results[0].district,
+                            location:  response.result.results[0].location)
+                        
+                        data[currentOffsetRequest.rawValue] = fetchedData
+                        
+                    case .failure(let error):
+                        print("Error: \(error)")
+                    }
+                    
+                    print("Leave group \(i)")
+                    group.leave()
+            }
+       
+        }
+        
+        group.notify(queue: .main) {
+            print("Finish all tasks using groups")
+            self.updateUI(for: nil)
+            
+        }
+        
+    }
+    private func fetchWithSemaphore() {
         let semaphore = DispatchSemaphore(value: 1)
         
         for i in 0..<Sections.allCases.count {
             let currentOffsetRequest = Sections.allCases[i].request
-            
-            print("Enter api number \(i)")
-            group.enter()
-            
+        
             if i == 0 {
-                // semaphore.wait()
+                semaphore.wait()
             }
             
             self.offsetProvider.fetchOffset(
@@ -95,29 +128,19 @@ class ViewController: UIViewController {
                         
                         data[currentOffsetRequest.rawValue] = fetchedData
                         
-                        //updateUI(for: i)
+                        updateUI(for: i)
                         
                     case .failure(let error):
                         print("Error: \(error)")
                     }
                     
                     print("Leave api number \(i)")
-                    group.leave()
-                    
-                    //semaphore.signal()
+                    semaphore.signal()
             }
        
         }
         
-        group.notify(queue: .main) {
-            print("Finish all tasks using groups")
-            self.updateUI(for: nil)
-            
-        }
-        
-        
     }
-    
     
     private func updateUI(for view: Int?) {
         let allViews = [offsetView0, offsetView10, offsetView20]
