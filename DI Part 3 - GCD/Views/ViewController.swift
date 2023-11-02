@@ -38,8 +38,8 @@ class ViewController: UIViewController {
         super.viewDidLoad()
         
         setUpLayouts()
-        fetchWithGroup()
-        //fetchWithSemaphore()
+//        fetchWithGroup()
+        fetchWithSemaphore()
         
     }
     private func setUpLayouts() {
@@ -94,8 +94,8 @@ class ViewController: UIViewController {
                     
                     print("Leave group \(i)")
                     group.leave()
-            }
-       
+                }
+            
         }
         
         group.notify(queue: .main) {
@@ -106,40 +106,45 @@ class ViewController: UIViewController {
         
     }
     private func fetchWithSemaphore() {
+       let serialQueue = DispatchQueue(label: "serialQueue")
+    
         let semaphore = DispatchSemaphore(value: 1)
         
         for i in 0..<Sections.allCases.count {
             let currentOffsetRequest = Sections.allCases[i].request
-        
-            if i == 0 {
+            
+            serialQueue.async {
+                
                 semaphore.wait()
+                
+                self.offsetProvider.fetchOffset(
+                    request: currentOffsetRequest) { [weak self] result in
+                        guard let self = self else { return }
+                        
+                        switch result {
+                        case .success(let response):
+                            
+                            let fetchedData = DistrictLocation(
+                                district: response.result.results[0].district,
+                                location:  response.result.results[0].location)
+                            
+                            data[currentOffsetRequest.rawValue] = fetchedData
+                            DispatchQueue.main.async {
+                                self.updateUI(for: i)
+                            }
+                            
+                        case .failure(let error):
+                            print("Error: \(error)")
+                        }
+                        
+                        print("Leave api number \(i)")
+                        semaphore.signal()
+                    }
+                
             }
             
-            self.offsetProvider.fetchOffset(
-                request: currentOffsetRequest) { [weak self] result in
-                    guard let self = self else { return }
-                    
-                    switch result {
-                    case .success(let response):
-                        
-                        let fetchedData = DistrictLocation(
-                            district: response.result.results[0].district,
-                            location:  response.result.results[0].location)
-                        
-                        data[currentOffsetRequest.rawValue] = fetchedData
-                        
-                        updateUI(for: i)
-                        
-                    case .failure(let error):
-                        print("Error: \(error)")
-                    }
-                    
-                    print("Leave api number \(i)")
-                    semaphore.signal()
-            }
-       
+            
         }
-        
     }
     
     private func updateUI(for view: Int?) {

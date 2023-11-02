@@ -41,26 +41,26 @@ class OffsetProvider {
         request: OffsetRequest,
         completion: @escaping OffsetResponse) {
             
-        httpClient.request(request) { [weak self] result in
-            guard let self = self else { return }
-            
-            switch result {
-            case .success(let data):
-                do {
-                    let response = try self.decoder.decode(Root.self, from: data)
-                    DispatchQueue.main.async {
+            httpClient.request(request) { [weak self] result in
+                guard let self = self else { return }
+                
+                switch result {
+                case .success(let data):
+                    do {
+                        let response = try self.decoder.decode(Root.self, from: data)
+                        
                         completion(.success(response))
+                        
+                        
+                    } catch {
+                        completion(.failure(error))
                     }
                     
-                } catch {
+                case .failure(let error):
                     completion(.failure(error))
                 }
                 
-            case .failure(let error):
-                completion(.failure(error))
-            }
-            
-            
+                
         }
         
     }
